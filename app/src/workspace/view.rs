@@ -4826,6 +4826,23 @@ impl Workspace {
             .expect("Active tab index entry should exist")
     }
 
+    /// linear-taco: split the focused pane in `direction` with a fresh
+    /// terminal. Routes through PaneGroup::add_session — the same path
+    /// `Cmd+Shift+D` (CustomAction::SplitPaneRight) takes — so the new
+    /// pane gets the same defaults (working directory inherited, agent
+    /// mode honored, etc.) as a keyboard-triggered split.
+    fn split_active_pane(
+        &self,
+        direction: crate::pane_group::Direction,
+        ctx: &mut ViewContext<Self>,
+    ) {
+        let pane_group_handle = self.active_tab_pane_group().clone();
+        pane_group_handle.update(ctx, |pg, ctx| {
+            let focused = pg.focused_pane_id(ctx);
+            pg.add_session(direction, Some(focused), None, None, None, ctx);
+        });
+    }
+
     /// Attempts to get selected text from the focused pane.
     /// Returns None if there is no selection, multiple selections, or an empty selection.
     /// Supports code, notebook, AI document, and terminal panes.
@@ -6155,6 +6172,27 @@ impl Workspace {
                         NewSessionMenuItem::CreateNewTabConfig,
                     ))
                     .with_icon(icons::Icon::Plus)
+                    .into_item(),
+            );
+        }
+
+        // linear-taco: add split-pane entries to the `+` dropdown so
+        // users can build grids without remembering the keyboard
+        // shortcut. Routes through `WorkspaceAction::SplitActivePane*`,
+        // which dispatches to PaneGroup::add_session — same code path
+        // as Cmd+Shift+D.
+        if cfg!(feature = "linear_taco") {
+            menu_items.push(MenuItem::Separator);
+            menu_items.push(
+                MenuItemFields::new("Split pane right")
+                    .with_on_select_action(WorkspaceAction::SplitActivePaneRight)
+                    .with_icon(icons::Icon::LayoutAlt01)
+                    .into_item(),
+            );
+            menu_items.push(
+                MenuItemFields::new("Split pane down")
+                    .with_on_select_action(WorkspaceAction::SplitActivePaneDown)
+                    .with_icon(icons::Icon::LayoutAlt01)
                     .into_item(),
             );
         }
@@ -16943,23 +16981,28 @@ impl Workspace {
                 .with_main_axis_size(MainAxisSize::Max);
             let bg_color = blended_colors::neutral_1(appearance.theme());
 
-            // Left: Warp logo - clickable to link to warp.dev
-            let warp_logo = Hoverable::new(self.mouse_states.warp_logo.clone(), |_state| {
-                ConstrainedBox::new(
-                    warp_core::ui::Icon::Warp
-                        .to_warpui_icon(appearance.theme().foreground())
-                        .finish(),
-                )
-                .with_height(24.)
-                .with_width(24.)
-                .finish()
-            })
-            .on_click(|ctx, _, _| {
-                ctx.dispatch_typed_action(WorkspaceAction::OpenLink("https://warp.dev".to_owned()));
-            })
-            .with_cursor(Cursor::PointingHand)
-            .finish();
-            tab_bar.add_child(warp_logo);
+            // linear-taco: hide Warp logo + warp.dev link in our build.
+            #[cfg(not(feature = "linear_taco"))]
+            {
+                let warp_logo = Hoverable::new(self.mouse_states.warp_logo.clone(), |_state| {
+                    ConstrainedBox::new(
+                        warp_core::ui::Icon::Warp
+                            .to_warpui_icon(appearance.theme().foreground())
+                            .finish(),
+                    )
+                    .with_height(24.)
+                    .with_width(24.)
+                    .finish()
+                })
+                .on_click(|ctx, _, _| {
+                    ctx.dispatch_typed_action(WorkspaceAction::OpenLink(
+                        "https://warp.dev".to_owned(),
+                    ));
+                })
+                .with_cursor(Cursor::PointingHand)
+                .finish();
+                tab_bar.add_child(warp_logo);
+            }
 
             // Right: Info button + "View all cloud runs" button (for ambient agent sessions) + "Open in Warp" button
             let mut right_row = Flex::row()
@@ -17198,6 +17241,11 @@ impl Workspace {
                 }
             }
             HeaderToolbarItemKind::AgentManagement => {
+                // linear-taco: hide the Warp Agent Management toolbar button —
+                // we use one-claude-per-pane grids instead.
+                if cfg!(feature = "linear_taco") {
+                    return None;
+                }
                 self.render_agent_management_view_button(appearance, ctx)
             }
             HeaderToolbarItemKind::CodeReview => self.render_right_panel_button(appearance, ctx),
@@ -19549,7 +19597,10 @@ impl Workspace {
     /// Computes the list of available left panel views based on current AI settings and feature flags.
     fn compute_left_panel_views(ctx: &AppContext) -> Vec<ToolPanelView> {
         let mut views = vec![];
-        if FeatureFlag::AgentViewConversationListView.is_enabled()
+        // linear-taco: hide Warp's agent-conversation history list — every
+        // pane runs its own claude session in Fluidstate AI.
+        if !cfg!(feature = "linear_taco")
+            && FeatureFlag::AgentViewConversationListView.is_enabled()
             && AISettings::as_ref(ctx).is_any_ai_enabled(ctx)
             && *AISettings::as_ref(ctx).show_conversation_history
         {
@@ -19567,7 +19618,9 @@ impl Workspace {
                 entry_focus: GlobalSearchEntryFocus::Results,
             });
         }
-        if WarpDriveSettings::is_warp_drive_enabled(ctx) {
+        // linear-taco: Warp Drive uses Warp's proprietary backend, which we
+        // bypass via skip_login. Hide the tab so users don't hit broken UI.
+        if !cfg!(feature = "linear_taco") && WarpDriveSettings::is_warp_drive_enabled(ctx) {
             views.push(ToolPanelView::WarpDrive);
         }
         views
@@ -19747,6 +19800,8 @@ impl TypedActionView for Workspace {
                 );
                 ctx.notify();
             }
+            SplitActivePaneRight => self.split_active_pane(crate::pane_group::Direction::Right, ctx),
+            SplitActivePaneDown => self.split_active_pane(crate::pane_group::Direction::Down, ctx),
             AddTabWithShell { shell, source } => {
                 self.add_tab_with_shell(shell.clone(), *source, ctx)
             }

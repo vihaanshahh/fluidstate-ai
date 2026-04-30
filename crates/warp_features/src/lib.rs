@@ -937,6 +937,9 @@ pub const RELEASE_FLAGS: &[FeatureFlag] = &[
     // Marked text is currently only supported on MacOS.
     #[cfg(target_os = "macos")]
     FeatureFlag::ImeMarkedText,
+    // linear-taco: IDE chrome promoted to default-on.
+    FeatureFlag::FileTree,
+    FeatureFlag::CommandPaletteFileSearch,
 ];
 
 /// Flags that we want to allow to switch at runtime (assuming RuntimeFeatureFlags is set)

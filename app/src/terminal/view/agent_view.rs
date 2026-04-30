@@ -167,6 +167,46 @@ impl TerminalView {
         conversation_id: Option<AIConversationId>,
         ctx: &mut ViewContext<Self>,
     ) -> Result<AIConversationId, EnterAgentViewError> {
+        // linear-taco: route the agent submission into a real interactive
+        // `claude` session in the current terminal pane.
+        //
+        // First submission in this pane → launch `claude "<prompt>"`
+        // (or bare `claude` if there's no prompt yet) to get into the
+        // Claude Code TUI with the prompt as turn 1.
+        //
+        // Every subsequent submission → write *just* the prompt text
+        // into the PTY. Claude is already running in this pane and is
+        // sitting at its input prompt; the bytes flow into Claude's
+        // own readline as the next user turn. One pane = one
+        // continuous conversation — same JSONL transcript, full
+        // context, no relaunches.
+        if cfg!(feature = "linear_taco") {
+            use crate::linear_taco::agent_session_tracker::is_launched_or_mark;
+
+            let already_launched = is_launched_or_mark(self.view_id);
+            let command = match (already_launched, initial_prompt.as_deref()) {
+                // Continuing an existing session: inject the prompt
+                // into Claude's running input box.
+                (true, Some(prompt)) if !prompt.trim().is_empty() => {
+                    format!("{prompt}\r")
+                }
+                // Continuing with no prompt — nothing to do (Claude
+                // is already showing its prompt; user can type).
+                (true, _) => String::new(),
+                // First submission with a prompt: launch Claude with
+                // the prompt as the first message.
+                (false, Some(prompt)) if !prompt.trim().is_empty() => {
+                    let escaped = prompt.replace('\\', "\\\\").replace('"', "\\\"");
+                    format!("claude \"{escaped}\"\r")
+                }
+                // First submission, no prompt: just open Claude.
+                (false, _) => String::from("claude\r"),
+            };
+            if !command.is_empty() {
+                self.write_to_pty(command.into_bytes(), ctx);
+            }
+            return Ok(conversation_id.unwrap_or_else(AIConversationId::new));
+        }
         // Capture pending context block IDs before entering agent view.
         let pending_attached_blocks = self
             .ai_context_model

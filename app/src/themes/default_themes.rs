@@ -1,5 +1,6 @@
 use asset_macro::bundled_or_fetched_asset;
 use pathfinder_color::ColorU;
+use theme_realtylens::{AnsiPalette, Color as RlColor, Palette as RlPalette, ThemeMode as RlMode};
 use warp_core::ui::{
     color::{blend::Blend, coloru_with_opacity, OPAQUE},
     theme::{
@@ -627,5 +628,72 @@ pub(super) fn received_referral_reward() -> WarpTheme {
             opacity: 100,
         }),
         Some("Received Referral Reward".to_string()),
+    )
+}
+
+// linear-taco: RealtyLens theme. Tokens live in `theme_realtylens` so the
+// design system can be reused outside this crate. We only translate them
+// into Warp's `WarpTheme` shape here.
+
+fn rl_color(c: RlColor) -> ColorU {
+    ColorU::new(c.r, c.g, c.b, c.a)
+}
+
+/// Pack an RealtyLens [`RlColor`] into a 0xRRGGBBAA u32 for AnsiColor.
+fn rl_u32(c: RlColor) -> u32 {
+    ((c.r as u32) << 24) | ((c.g as u32) << 16) | ((c.b as u32) << 8) | (c.a as u32)
+}
+
+fn rl_ansi_colors(p: &AnsiPalette) -> TerminalColors {
+    let normal = AnsiColors::new(
+        AnsiColor::from_u32(rl_u32(p.black)),
+        AnsiColor::from_u32(rl_u32(p.red)),
+        AnsiColor::from_u32(rl_u32(p.green)),
+        AnsiColor::from_u32(rl_u32(p.yellow)),
+        AnsiColor::from_u32(rl_u32(p.blue)),
+        AnsiColor::from_u32(rl_u32(p.magenta)),
+        AnsiColor::from_u32(rl_u32(p.cyan)),
+        AnsiColor::from_u32(rl_u32(p.white)),
+    );
+    let bright = AnsiColors::new(
+        AnsiColor::from_u32(rl_u32(p.bright_black)),
+        AnsiColor::from_u32(rl_u32(p.bright_red)),
+        AnsiColor::from_u32(rl_u32(p.bright_green)),
+        AnsiColor::from_u32(rl_u32(p.bright_yellow)),
+        AnsiColor::from_u32(rl_u32(p.bright_blue)),
+        AnsiColor::from_u32(rl_u32(p.bright_magenta)),
+        AnsiColor::from_u32(rl_u32(p.bright_cyan)),
+        AnsiColor::from_u32(rl_u32(p.bright_white)),
+    );
+    TerminalColors::new(normal, bright)
+}
+
+pub fn realtylens_light() -> WarpTheme {
+    let palette = RlPalette::for_mode(RlMode::Light);
+    let ansi = AnsiPalette::for_mode(RlMode::Light);
+    WarpTheme::new(
+        Fill::Solid(rl_color(palette.bg)),
+        rl_color(palette.text_primary),
+        Fill::Solid(rl_color(palette.accent)),
+        None,
+        Some(Details::Lighter),
+        rl_ansi_colors(&ansi),
+        None,
+        Some("RealtyLens Light".to_string()),
+    )
+}
+
+pub fn realtylens_dark() -> WarpTheme {
+    let palette = RlPalette::for_mode(RlMode::Dark);
+    let ansi = AnsiPalette::for_mode(RlMode::Dark);
+    WarpTheme::new(
+        Fill::Solid(rl_color(palette.bg)),
+        rl_color(palette.text_primary),
+        Fill::Solid(rl_color(palette.accent)),
+        None,
+        Some(Details::Darker),
+        rl_ansi_colors(&ansi),
+        None,
+        Some("RealtyLens Dark".to_string()),
     )
 }

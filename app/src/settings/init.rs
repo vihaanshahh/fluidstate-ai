@@ -99,6 +99,9 @@ pub fn register_all_settings(ctx: &mut AppContext) {
     SameLinePromptBlockSettings::register(ctx);
     SemanticSelection::register(ctx);
 
+    // linear-taco
+    super::linear_taco::LinearTacoSettings::register(ctx);
+
     #[cfg(target_os = "linux")]
     super::LinuxAppConfiguration::register(ctx);
 

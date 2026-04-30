@@ -148,9 +148,10 @@ impl View for TerminalViewZeroStateBlock {
         let theme = appearance.theme();
 
         let title_font_size = appearance.monospace_font_size() + 6.;
-        let title = Flex::row()
-            .with_cross_axis_alignment(CrossAxisAlignment::Center)
-            .with_child(
+        let mut title_row = Flex::row().with_cross_axis_alignment(CrossAxisAlignment::Center);
+        // linear-taco: hide the Warp logo; keep the title text.
+        if !cfg!(feature = "linear_taco") {
+            title_row = title_row.with_child(
                 Container::new(
                     ConstrainedBox::new(
                         Icon::Warp
@@ -163,7 +164,9 @@ impl View for TerminalViewZeroStateBlock {
                 )
                 .with_margin_right(8.)
                 .finish(),
-            )
+            );
+        }
+        let title = title_row
             .with_child(
                 Text::new(
                     "New terminal session",

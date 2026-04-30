@@ -2028,7 +2028,7 @@ dependencies = [
  "rustc-hash 1.1.0",
  "shlex",
  "syn 2.0.117",
- "which",
+ "which 4.4.2",
 ]
 
 [[package]]
@@ -2758,6 +2758,24 @@ name = "clap_lex"
 version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b94f61472cee1439c0b966b47e3aca9ae07e45d070759512cd390ea2bebc6675"
+
+[[package]]
+name = "claude_viewer"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-channel",
+ "async-fs",
+ "futures",
+ "futures-lite 1.13.0",
+ "notify-debouncer-full",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.17",
+ "tokio",
+ "tracing",
+]
 
 [[package]]
 name = "clipboard-win"
@@ -4523,6 +4541,18 @@ dependencies = [
  "smallvec 1.15.1",
  "zune-inflate",
 ]
+
+[[package]]
+name = "fallible-iterator"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2acce4a10f12dc2fb14a218589d4f1f62ef011b2d0cc4b3cb1bba8e94da14649"
+
+[[package]]
+name = "fallible-streaming-iterator"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
 
 [[package]]
 name = "fancy-regex"
@@ -7295,6 +7325,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "linear_taco_agents"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-channel",
+ "claude_viewer",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.17",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "linear_taco_claudex"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-channel",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.17",
+ "tokio",
+ "tracing",
+ "which 8.0.2",
+]
+
+[[package]]
 name = "linked-hash-map"
 version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8088,7 +8150,7 @@ dependencies = [
  "thiserror 1.0.63",
  "versions",
  "wfd",
- "which",
+ "which 4.4.2",
  "winapi",
 ]
 
@@ -9992,7 +10054,7 @@ dependencies = [
  "protobuf-support",
  "tempfile",
  "thiserror 1.0.63",
- "which",
+ "which 4.4.2",
 ]
 
 [[package]]
@@ -10873,6 +10935,20 @@ dependencies = [
  "num-integer",
  "num-traits",
  "realfft",
+]
+
+[[package]]
+name = "rusqlite"
+version = "0.35.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a22715a5d6deef63c637207afbe68d0c72c3f8d0022d7cf9714c442d6157606b"
+dependencies = [
+ "bitflags 2.9.4",
+ "fallible-iterator",
+ "fallible-streaming-iterator",
+ "hashlink",
+ "libsqlite3-sys",
+ "smallvec 1.15.1",
 ]
 
 [[package]]
@@ -12777,6 +12853,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3369f5ac52d5eb6ab48c6b4ffdc8efbcad6b89c765749064ba298f2c68a16a76"
 
 [[package]]
+name = "theme_realtylens"
+version = "0.1.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "thiserror"
 version = "1.0.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -14183,6 +14266,7 @@ dependencies = [
  "channel_versions",
  "chrono",
  "clap",
+ "claude_viewer",
  "cocoa 0.26.0",
  "comfy-table",
  "command",
@@ -14260,6 +14344,8 @@ dependencies = [
  "libc",
  "libsqlite3-sys",
  "line-ending",
+ "linear_taco_agents",
+ "linear_taco_claudex",
  "log",
  "log-panics",
  "lsp",
@@ -14352,6 +14438,7 @@ dependencies = [
  "tabwriter",
  "tantivy",
  "tempfile",
+ "theme_realtylens",
  "thiserror 2.0.17",
  "thousands",
  "tikv-jemallocator",
@@ -14402,6 +14489,7 @@ dependencies = [
  "web-sys",
  "websocket",
  "wgpu",
+ "which 8.0.2",
  "windows 0.62.2",
  "windows-registry 0.2.0",
  "windows-result 0.2.0",
@@ -15627,6 +15715,15 @@ dependencies = [
  "home",
  "once_cell",
  "rustix 0.38.44",
+]
+
+[[package]]
+name = "which"
+version = "8.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "81995fafaaaf6ae47a7d0cc83c67caf92aeb7e5331650ae6ff856f7c0c60c459"
+dependencies = [
+ "libc",
 ]
 
 [[package]]

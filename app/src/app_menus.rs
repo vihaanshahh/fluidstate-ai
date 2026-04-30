@@ -47,6 +47,12 @@ const DISABLE_IN_BAND_GENERATORS_MENU_ITEM_NAME: &str =
     "Disable in-band generators for new sessions";
 const ENABLE_PTY_RECORDING: &str = "Enable PTY Recording Mode (warp.pty.recording)";
 const DISABLE_PTY_RECORDING: &str = "Disable PTY Recording Mode (warp.pty.recording)";
+// linear-taco: brand name used in user-visible menu strings.
+#[cfg(feature = "linear_taco")]
+const BRAND_NAME: &str = "Fluidstate AI";
+#[cfg(not(feature = "linear_taco"))]
+const BRAND_NAME: &str = "Warp";
+
 const SHOW_BOOTSTRAP_BLOCK_MENU_ITEM_NAME: &str = "Show Initialization Block";
 const HIDE_BOOTSTRAP_BLOCK_MENU_ITEM_NAME: &str = "Hide Initialization Block";
 const SHOW_IN_BAND_COMMAND_BLOCKS_MENU_ITEM_NAME: &str = "Show In-band Command Blocks";
@@ -208,7 +214,11 @@ fn make_new_app_menu(ctx: &AppContext) -> Menu {
     menu_items.push(MenuItem::Standard(StandardAction::ShowAllApps));
     menu_items.push(MenuItem::Separator);
     menu_items.push(MenuItem::Custom(CustomMenuItem::new(
-        "Set Warp as Default Terminal",
+        if cfg!(feature = "linear_taco") {
+            "Set Fluidstate AI as Default Terminal"
+        } else {
+            "Set Warp as Default Terminal"
+        },
         move |ctx| {
             DefaultTerminal::handle(ctx).update(ctx, |default_terminal, ctx| {
                 default_terminal.make_warp_default(ctx)
@@ -243,7 +253,8 @@ fn make_new_app_menu(ctx: &AppContext) -> Menu {
         None,
     )));
     menu_items.push(MenuItem::Standard(StandardAction::Quit));
-    Menu::new("Warp", menu_items)
+    // linear-taco: rebrand the macOS menu-bar title.
+    Menu::new(BRAND_NAME, menu_items)
 }
 
 fn make_new_file_menu(ctx: &AppContext) -> Menu {
@@ -299,7 +310,11 @@ fn make_new_edit_menu(ctx: &AppContext) -> Menu {
     ];
     let group_5 = vec![
         MenuItem::Custom(CustomMenuItem::new(
-            "Use Warp's Prompt",
+            if cfg!(feature = "linear_taco") {
+                "Use Fluidstate AI's Prompt"
+            } else {
+                "Use Warp's Prompt"
+            },
             move |ctx| ctx.dispatch_global_action("app:toggle_user_ps1", &()),
             move |_props, ctx| MenuItemPropertyChanges {
                 checked: Some(
@@ -375,6 +390,9 @@ fn make_new_edit_menu(ctx: &AppContext) -> Menu {
 
 fn make_new_view_menu(ctx: &AppContext) -> Menu {
     let mut items = vec![
+        // linear-taco: Warp Drive is hidden — uses Warp's proprietary backend that we
+        // bypass. Code remains for upstream rebases.
+        #[cfg(not(feature = "linear_taco"))]
         updateable_custom_item_without_checkmark(CustomAction::ToggleWarpDrive, ctx),
         MenuItem::Separator,
         updateable_custom_item_without_checkmark(CustomAction::CommandPalette, ctx),
@@ -605,6 +623,9 @@ fn make_new_drive_menu(ctx: &AppContext) -> Menu {
     ));
     items.extend([
         MenuItem::Separator,
+        // linear-taco: Warp Drive is hidden — uses Warp's proprietary backend that we
+        // bypass. Code remains for upstream rebases.
+        #[cfg(not(feature = "linear_taco"))]
         updateable_custom_item_without_checkmark(CustomAction::ToggleWarpDrive, ctx),
         updateable_custom_item_without_checkmark(CustomAction::SearchDrive, ctx),
         updateable_custom_item_without_checkmark(CustomAction::OpenTeamSettings, ctx),
@@ -924,9 +945,23 @@ fn make_new_help_menu() -> Menu {
         "Help",
         vec![
             feedback_menu_item(),
-            link_menu_item("Warp Documentation...", links::USER_DOCS_URL.into()),
+            link_menu_item(
+                if cfg!(feature = "linear_taco") {
+                    "Fluidstate AI Documentation..."
+                } else {
+                    "Warp Documentation..."
+                },
+                links::USER_DOCS_URL.into(),
+            ),
             link_menu_item("GitHub Issues...", links::GITHUB_ISSUES_URL.into()),
-            link_menu_item("Warp Slack Community...", links::SLACK_URL.into()),
+            link_menu_item(
+                if cfg!(feature = "linear_taco") {
+                    "Fluidstate AI Community..."
+                } else {
+                    "Warp Slack Community..."
+                },
+                links::SLACK_URL.into(),
+            ),
         ],
     )
 }

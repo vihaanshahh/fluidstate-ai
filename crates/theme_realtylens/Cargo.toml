@@ -1,0 +1,18 @@
+[package]
+name = "theme_realtylens"
+authors = ["Linear Taco"]
+version = "0.1.0"
+edition = "2024"
+publish.workspace = true
+license = "MIT"
+
+[lib]
+path = "src/lib.rs"
+
+# Deliberately depends only on the standard library + serde so the crate
+# stays MIT and could be lifted out of the linear-taco fork. The view
+# wire-in (palette registration in app/src/themes/) happens upstream, where
+# AGPL is fine.
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }

@@ -242,7 +242,13 @@ impl AuthClient for ServerApi {
 
     async fn get_or_refresh_access_token(&self) -> Result<AuthToken> {
         if cfg!(feature = "skip_login") {
-            bail!("skip_login enabled; failing all authenticated requests");
+            // linear-taco: agent submissions are intercepted upstream in
+            // `Controller::send_query` and routed to Claude Code, so this
+            // path should never run for the agent flow. Anything else
+            // hitting it (Drive, sync, etc.) is a hosted feature we don't
+            // support — return a quiet error rather than a long banner so
+            // the user sees a normal "feature unavailable" message.
+            bail!("hosted Warp feature unavailable in Linear Taco");
         }
 
         let Some(credentials) = self.auth_state.credentials() else {

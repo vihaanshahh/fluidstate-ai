@@ -18,6 +18,8 @@ mod init;
 pub mod initializer;
 mod input;
 mod input_mode;
+// linear-taco
+mod linear_taco;
 #[cfg(target_os = "linux")]
 mod linux;
 pub mod macros;
@@ -52,6 +54,8 @@ pub use gpu::*;
 pub use init::*;
 pub use input::*;
 pub use input_mode::*;
+// linear-taco
+pub use linear_taco::*;
 #[cfg(target_os = "linux")]
 pub use linux::*;
 pub use native_preference::*;

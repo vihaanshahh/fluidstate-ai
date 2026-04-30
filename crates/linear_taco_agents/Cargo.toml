@@ -1,0 +1,25 @@
+[package]
+name = "linear_taco_agents"
+authors = ["Linear Taco"]
+version = "0.1.0"
+edition = "2024"
+publish.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+anyhow.workspace = true
+async-channel.workspace = true
+claude_viewer = { path = "../claude_viewer" }
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["fs", "io-util", "rt", "sync", "time", "macros"] }
+tracing.workspace = true
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[dev-dependencies]
+tempfile.workspace = true
+tokio = { workspace = true, features = ["full", "macros", "rt-multi-thread", "test-util"] }

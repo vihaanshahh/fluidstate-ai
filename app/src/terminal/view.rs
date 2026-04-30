@@ -11561,6 +11561,17 @@ impl TerminalView {
             return false;
         }
 
+        // linear-taco: when a `claude` session starts, merge claude-ex's
+        // MCP + hook entries into `.claude/settings.json` and spawn the
+        // `claude-ex watch` sidecar for this workspace. Best-effort —
+        // both phases are gated by user-toggleable LinearTacoSettings.
+        if matches!(notification.agent, CLIAgent::Claude) {
+            crate::linear_taco::claudex_session::on_claude_session_started(
+                notification.cwd.as_deref(),
+                ctx,
+            );
+        }
+
         let model_events_handle = self.model_events_handle.clone();
         let view_id = self.view_id;
         let agent = notification.agent;

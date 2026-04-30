@@ -44,6 +44,8 @@ mod gpu_state;
 mod input_classifier;
 mod interval_timer;
 mod linear;
+// linear-taco — Claude Code IDE additions on top of upstream Warp.
+mod linear_taco;
 #[cfg(any(target_os = "macos", target_os = "windows"))]
 mod login_item;
 mod menu;

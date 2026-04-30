@@ -1,0 +1,128 @@
+RealtyLens — Visual Theme
+=========================
+Source: landing/app/globals.css (single source of truth)
+Inspiration: General Intelligence Company (generalintelligencecompany.com/writing) — editorial,
+warm off-white, pastel-chip signature. Earlier landing page was "Cofounder-inspired" with cobalt
+blue, but the live system has been re-themed to the GIC palette (with a few legacy tokens mapped
+through for backwards compatibility).
+
+------------------------------------------------------------------------------------------------
+1. Mood / Aesthetic
+------------------------------------------------------------------------------------------------
+- Warm off-white foundation (not stark white, not gray) — feels like paper.
+- Pure black for buttons and ink (CTA color is black, NOT blue).
+- Seven pastel "chip" colors used as the editorial signature — backgrounds for tags, category
+  icons, avatars, callout cards.
+- Charcoal text on warm off-white. Subtle, low-contrast borders.
+- Soft, slow animations (cubic-bezier(0.16, 1, 0.3, 1)). Reduced-motion fully respected.
+
+------------------------------------------------------------------------------------------------
+2. Color Palette
+------------------------------------------------------------------------------------------------
+Surfaces (warm off-white)
+  --bg              #FEFFFC  page background
+  --bg-alt          #F9FAF7  section / card surface
+  --bg-card         #FFFFFF  cleanest surface
+  --bg-elevated     #EEF1ED  pressed / inset
+  --bg-dark         #171717
+  --bg-dark-alt     #000000
+
+Borders (solid neutral grays)
+  --border          #DEE2DE
+  --border-dark     #B4B8B4
+  --border-subtle   #EEF1ED
+
+Accent (pure ink — primary CTA is black)
+  --accent          #171717
+  --accent-light    #2C2C2C
+  --accent-pale     rgba(23,23,23,0.06)
+  --accent-dark     #000000
+
+Pastel chip palette (editorial signature)
+  --chip-sky        #E0F1F8
+  --chip-sage       #E9EFD0
+  --chip-lavender   #EADFFD
+  --chip-blush      #F4DADA
+  --chip-butter     #F4F1DA
+  --chip-orchid     #F6E5F3
+  --chip-peach      #FFE2D4
+
+Halo (warm peach + sage blend used behind hero)
+  --aero            var(--chip-peach)
+  --aero-pale       rgba(255,226,212,0.30)
+  --aero-glow       rgba(244,218,218,0.30)
+
+Status colors
+  --green           #10A37F   success
+  --green-light     #1EC99F
+  --warm            #EF4444   error red
+  --warm-light      #F87171
+  --teal            #3B82F6   info blue
+  --teal-dark       #0072CC
+
+Text (charcoal ink + warm gray scale)
+  --text-primary             #2C2C2C
+  --text-secondary           #525252
+  --text-tertiary            #7A7A7A
+  --text-muted               #A8A8A8
+  --text-on-dark             #FEFFFC
+  --text-on-dark-secondary   rgba(254,255,252,0.7)
+
+Shadows (subtle)
+  --shadow-sm   0 1px 2px rgba(44,44,44,0.04), 0 1px 1px rgba(44,44,44,0.05)
+  --shadow-md   0 4px 12px rgba(44,44,44,0.05), 0 1px 3px rgba(44,44,44,0.04)
+  --shadow-lg   0 18px 60px rgba(44,44,44,0.08)
+
+------------------------------------------------------------------------------------------------
+3. Typography
+------------------------------------------------------------------------------------------------
+- Font family: Inter (var(--font-inter)) → system-ui → -apple-system → sans-serif
+- Body: 16px / 1.6 / weight 300 (light)
+- Antialiased (-webkit-font-smoothing: antialiased)
+- Brand wordmark / nav links: 13–15px, weight 400–600, letter-spacing -0.3px
+
+------------------------------------------------------------------------------------------------
+4. Motion / Animations
+------------------------------------------------------------------------------------------------
+Standard easing:    cubic-bezier(0.16, 1, 0.3, 1)
+Default durations:  0.18s–0.7s
+
+Named animations:
+  fadeUp / fadeUpSm  — entrance translateY(20px → 0) + opacity
+  fadeIn             — pure opacity
+  scaleIn            — 0.96 → 1 + opacity
+  routeEnter         — dashboard route transition (8px → 0)
+  growBar            — progress bar fills from 0 → var(--target)
+  barShimmer         — diagonal shimmer over running progress
+  pulseHalo          — soft "Live" dot halo
+  atmosDrift         — slow 14s drift on hero halo
+
+Scroll-reveal utility classes:
+  .scroll-fade-up / .scroll-fade-in / .scroll-fade-left / .scroll-fade-right / .scroll-scale-in
+
+All motion is disabled under prefers-reduced-motion: reduce.
+
+------------------------------------------------------------------------------------------------
+5. Layout & Component Conventions
+------------------------------------------------------------------------------------------------
+- Styling system: CSS Modules (*.module.css) — NOT Tailwind. Each component owns its module file.
+- Global tokens live ONLY in app/globals.css.
+- Hero / nav max-width: 1240px, side padding 28px, nav height 64px.
+- Nav background is transparent + backdrop-filter: blur(8px).
+- Underline-on-hover for nav links (1px line, scaleX from right → left).
+- Page-level animations go through lib/route-fade.tsx — don't roll new ones.
+
+------------------------------------------------------------------------------------------------
+6. Legacy Tokens (mapped through to GIC palette)
+------------------------------------------------------------------------------------------------
+Older code references --marble-*, --gold-*, --vine-*, --terracotta-*, --teal-*, --cool-*,
+--success-*, --amber-*, --alert-*, --warm-*. These still exist but are aliased to the new
+accent/chip/green tokens so the entire app stays in the GIC color world. New code should use the
+canonical tokens above, not the legacy aliases.
+
+------------------------------------------------------------------------------------------------
+7. One-Sentence Theme Summary
+------------------------------------------------------------------------------------------------
+Warm, paper-like off-white surfaces with pure-black ink CTAs, charcoal text, seven pastel chip
+accents, Inter type, and slow editorial fade/drift animations — a calm, magazine-style aesthetic
+inspired by General Intelligence Company.

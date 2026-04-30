@@ -607,6 +607,16 @@ impl BlocklistAIController {
             return;
         }
 
+        // linear-taco: route user submissions to Claude Code rather than
+        // Warp's hosted agent backend (which is unreachable under
+        // `skip_login`). The prompt is dispatched to `claude -p` via the
+        // headless tray; output streams into the tray's retained ring
+        // and is viewable from there.
+        if cfg!(feature = "linear_taco") {
+            crate::linear_taco::agent_intercept::dispatch_prompt(query.clone(), None);
+            return;
+        }
+
         let (query, user_query_mode) = if let Some(q) =
             commands::strip_command_prefix(&query, commands::PLAN_NAME)
         {

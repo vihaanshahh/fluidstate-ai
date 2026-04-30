@@ -138,6 +138,11 @@ pub enum WorkspaceAction {
     AddTerminalTab {
         hide_homepage: bool,
     },
+    /// linear-taco: split the active pane to the right with a new
+    /// terminal — same as Cmd+Shift+D, but reachable from menus.
+    SplitActivePaneRight,
+    /// linear-taco: split the active pane downward with a new terminal.
+    SplitActivePaneDown,
     AddTabWithShell {
         shell: AvailableShell,
         source: AddTabWithShellSource,
@@ -730,6 +735,8 @@ impl WorkspaceAction {
             | ToggleTabColor { .. }
             | AddDefaultTab
             | AddTerminalTab { .. }
+            | SplitActivePaneRight
+            | SplitActivePaneDown
             | AddTabWithShell { .. }
             | AddGetStartedTab
             | AddAgentTab

@@ -34,6 +34,7 @@ app-installation-detection = { path = "crates/app-installation-detection" }
 asset_cache = { path = "crates/asset_cache" }
 asset_macro = { path = "crates/asset_macro" }
 channel_versions = { path = "crates/channel_versions", default-features = false }
+claude_viewer = { path = "crates/claude_viewer" }
 command = { path = "crates/command" }
 command-signatures-v2 = { path = "crates/command-signatures-v2" }
 computer_use = { path = "crates/computer_use" }
@@ -48,6 +49,8 @@ integration = { path = "crates/integration" }
 ipc = { path = "crates/ipc" }
 jsonrpc = { path = "crates/jsonrpc" }
 languages = { path = "crates/languages" }
+linear_taco_agents = { path = "crates/linear_taco_agents" }
+linear_taco_claudex = { path = "crates/linear_taco_claudex" }
 lsp = { path = "crates/lsp" }
 markdown_parser = { path = "crates/markdown_parser" }
 natural_language_detection = { path = "crates/natural_language_detection" }
@@ -63,6 +66,7 @@ simple_logger = { path = "crates/simple_logger" }
 string-offset = { path = "crates/string-offset" }
 sum_tree = { path = "crates/sum_tree" }
 syntax_tree = { path = "crates/syntax_tree" }
+theme_realtylens = { path = "crates/theme_realtylens" }
 ui_components = { path = "crates/ui_components" }
 vim = { path = "crates/vim" }
 virtual-fs = { path = "crates/virtual_fs" }

@@ -1,0 +1,27 @@
+[package]
+name = "claude_viewer"
+authors = ["Linear Taco"]
+version = "0.1.0"
+edition = "2024"
+publish.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+anyhow.workspace = true
+async-channel.workspace = true
+async-fs.workspace = true
+futures.workspace = true
+futures-lite.workspace = true
+notify-debouncer-full.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["fs", "io-util", "rt", "sync", "time", "macros"] }
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+tokio = { workspace = true, features = ["full", "macros", "rt-multi-thread", "test-util"] }

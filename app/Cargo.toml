@@ -215,6 +215,13 @@ version-compare.workspace = true
 vte.workspace = true
 walkdir.workspace = true
 warp-workflows.workspace = true
+# linear-taco additions
+claude_viewer.workspace = true
+linear_taco_agents.workspace = true
+linear_taco_claudex.workspace = true
+theme_realtylens.workspace = true
+which = "8"
+# end linear-taco additions
 warp_completer.workspace = true
 warp_core.workspace = true
 warp_editor.workspace = true
@@ -623,6 +630,8 @@ default = [
     "open_warp_new_settings_modes",
     "skip_firebase_anonymous_user",
     "settings_file",
+    # linear-taco: bundle our defaults (skip_login, etc.).
+    "linear_taco",
 ]
 # Enable this feature to automatically perform heap profiling.  NOTE: This will
 # substantially slow down program execution.
@@ -753,6 +762,12 @@ sequential_storage = []
 session_sharing = []
 session_sharing_acls = []
 skip_login = []
+# linear-taco: meta-feature that bundles every Linear-Taco-specific
+# build flag. Currently just `skip_login` so we don't gate the IDE
+# behind Warp's proprietary Firebase backend, but future flags
+# (e.g. disable telemetry, hide Warp Drive nav, default theme override)
+# go here.
+linear_taco = ["skip_login"]
 # This feature should only be enabled when building a self-contained binary with the bundle script.
 standalone = []
 prompt_suggestions_via_maa = []

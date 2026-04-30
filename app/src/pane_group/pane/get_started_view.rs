@@ -229,7 +229,11 @@ impl GetStartedView {
                 .finish(),
                 appearance
                     .ui_builder()
-                    .paragraph("Welcome to Warp")
+                    .paragraph(if cfg!(feature = "linear_taco") {
+                        "Welcome to Fluidstate AI"
+                    } else {
+                        "Welcome to Warp"
+                    })
                     .with_style(UiComponentStyles {
                         font_size: Some(20.),
                         ..Default::default()
