@@ -14,8 +14,6 @@
 
 name: Close Stale Fix PRs
 on:
-  schedule:
-    - cron: '0 12 * * *' # 8am EST
   workflow_dispatch:
 
 jobs:
